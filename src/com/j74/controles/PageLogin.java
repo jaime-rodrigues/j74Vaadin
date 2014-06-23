@@ -2,8 +2,6 @@ package com.j74.controles;
 
 import javax.swing.event.EventListenerList;
 
-import com.j74.helpers.HelpManager;
-import com.j74.helpers.HelpOverlay;
 import com.j74.listners.LoginEvent;
 import com.j74.listners.LoginListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -13,7 +11,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
@@ -23,65 +20,18 @@ import com.vaadin.ui.VerticalLayout;
 public class PageLogin extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
-	private CssLayout root;
 	private EventListenerList loginListeners = new EventListenerList();
-
-	public PageLogin(CssLayout root) {
+	private String style;
+	
+	public PageLogin(String style) {
 		super();
-
-		this.root = root;
-		this.root.removeAllComponents();
-
+		this.style = style;
 		buildLoginView();
 	}
 
 	private void buildLoginView() {
-        Label bg = new Label();
-        bg.setSizeUndefined();
-        bg.addStyleName("login-bg");
-        root.addComponent(bg);
-        root.addComponent(this);
-		
-//		HelpManager.getInstance().closeAll();
-//		HelpOverlay w = HelpManager
-//				.getInstance()
-//				.addOverlay(
-//						"Bem-vindo à aplicação demo j74.GWeb",
-//						"<p>Esta aplicação ainda não é real, somente demonstra uma aplicação construida com o <a href=\"http://vaadin.com\">Vaadin framework</a>."
-//						+ "</p><p>Usuário e senha não são obrigatórios, clique no botão \"Entrar\" para continuar. Você pode tentar um usuário e senha aleatórios.</p>",
-//						"Entrar");
-//		w.center();
-//		root.getUI().addWindow(w);
-		root.getUI().addStyleName("login");
-
 		setSizeFull();
-		addStyleName("login-layout");
-
-		final CssLayout loginPanel = new CssLayout();
-		loginPanel.addStyleName("login-panel");
-
-		VerticalLayout labels = new VerticalLayout();
-		labels.setWidth("100%");
-		labels.setMargin(true);
-		labels.addStyleName("labels");
-		loginPanel.addComponent(labels);
-
-		Label welcome = new Label("Bem-vindo à aplicação j74.GWeb demo");
-		welcome.setSizeUndefined();
-		welcome.addStyleName("h4");
-		labels.addComponent(welcome);
-		labels.setComponentAlignment(welcome, Alignment.MIDDLE_LEFT);
-
-		Label title = new Label("<p>Esta aplicação ainda não é real.<br>"
-								+ "É somente uma demonstração construida com o <a href=\"http://vaadin.com\">Vaadin framework</a>.<br>"
-	  							+ "Usuário e senha não são obrigatórios, clique no botão \"Entrar\" para continuar.<br>"
-								+ "Você pode tentar um usuário e senha aleatórios.</p>",
-	  							ContentMode.HTML);
-
-		title.setSizeUndefined();
-		title.addStyleName("Entrar");
-		labels.addComponent(title);
-		labels.setComponentAlignment(title, Alignment.MIDDLE_RIGHT);
+		addStyleName(style);
 
 		HorizontalLayout fields = new HorizontalLayout();
 		fields.setSpacing(true);
@@ -118,9 +68,9 @@ public class PageLogin extends VerticalLayout {
 					// dispara o evento de login
 					fireOnLogin(new LoginEvent(this), true);
 				} else {
-					if (loginPanel.getComponentCount() > 2) {
+					if (getComponentCount() > 2) {
 						// Remove the previous error message
-						loginPanel.removeComponent(loginPanel.getComponent(2));
+						removeComponent(getComponent(2));
 					}
 					// Add new error message
 					Label error = new Label(
@@ -131,17 +81,14 @@ public class PageLogin extends VerticalLayout {
 					error.addStyleName("light");
 					// Add animation
 					error.addStyleName("v-animate-reveal");
-					loginPanel.addComponent(error);
+					addComponent(error);
 					username.focus();
 				}
 			}
 		});
 
 		signin.addShortcutListener(enter);
-		loginPanel.addComponent(fields);
-
-		addComponent(loginPanel);
-		setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
+		addComponent(fields);
 	}
 
 	public void addLoginListener(LoginListener listener) {

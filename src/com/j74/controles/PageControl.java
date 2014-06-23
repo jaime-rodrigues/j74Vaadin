@@ -11,6 +11,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -18,7 +19,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
@@ -35,10 +35,9 @@ public class PageControl extends VerticalLayout {
     private UI parentUI;
     private CssLayout content = new CssLayout();
     private HorizontalLayout menu = new HorizontalLayout();    
-    private HorizontalLayout sidebar = new HorizontalLayout();
+    private HorizontalLayout menuBar = new HorizontalLayout();
 	private HorizontalLayout branding = new HorizontalLayout();
-	private HorizontalLayout user = new HorizontalLayout();
-	private MenuBar settings = new MenuBar();
+	private HorizontalLayout settings = new HorizontalLayout();
  	
     private HashMap<String, Class<? extends View>> routes = new HashMap<String, Class<? extends View>>();
     private HashMap<String, Button> viewNameToMenuButton = new HashMap<String, Button>();
@@ -50,33 +49,48 @@ public class PageControl extends VerticalLayout {
 	public PageControl(UI parentUI, HashMap<String, Class<? extends View>> routes) {
 		this.parentUI = parentUI;
 		this.routes = routes;
-     	
-		CreateSideBar();
-		CreateContainerview();
-		CreateMenu();
-		CreateNavigator();
-		CreateUser();
-		CreateSettings();
-		CreateBranding();
+
+		BuildContainerview();
+		BuildNavigator();
 	}
 	
-    private void CreateContainerview(){
+	private void BuildMenuBar() {
+		menuBar.addComponent(branding);
+		menuBar.addComponent(menu);
+		menuBar.addComponent(settings);
+		menuBar.addStyleName("sidebar");
+		
+//		menuBar.setComponentAlignment(menu, Alignment.MIDDLE_CENTER);
+		menuBar.setExpandRatio(menu, 1);
+		menuBar.setWidth("100%");
+	}
+
+    private void BuildContainerview(){
     	setSizeFull();
     	addStyleName("main-view");
 
-		addComponent(sidebar);
+		BuildMenu();
+		BuildMenuBar();
+		BuildSettings("J. Rodrigues");
+		BuildBranding();
+
+		addComponent(menuBar);
 		addComponent(content);
     	content.setSizeUndefined();
     	content.addStyleName("view-content");
     	setExpandRatio(content, 1);    	
     }
 
-    private void CreateMenu() {
+    private void BuildMenu() {
     	menu.removeAllComponents();
+    	menu.addStyleName("menu");
+    	menu.setSizeUndefined();
+    	menu.setMargin(true);
 
     	for (final String view : routes.keySet()) {
     		Button b = new NativeButton(view.substring(0, 1).toUpperCase() + view.substring(1).replace('-', ' '));
     		b.addStyleName("icon-" + view);
+    		b.setSizeFull();
     		b.addClickListener(new ClickListener() {
     			@Override
     			public void buttonClick(ClickEvent event) {
@@ -90,13 +104,9 @@ public class PageControl extends VerticalLayout {
     		menu.addComponent(b);
     		viewNameToMenuButton.put("/" + view, b);
     	}
-    	menu.addStyleName("menu");
-    	menu.setHeight("100%");
-    	menu.setSizeUndefined();
-
     }
     
-    private void CreateNavigator(){
+    private void BuildNavigator(){
         navegador = new Navigator(parentUI, content);
 		navegador.addView("/dashboard", DashboardView.class);
 
@@ -133,20 +143,7 @@ public class PageControl extends VerticalLayout {
     	
     }
     
-    private void CreateSideBar(){
-        sidebar.addStyleName("sidebar");
-    	sidebar.setWidth("100%");
-    	sidebar.setHeight(null);
-    	sidebar.addComponent(branding);
-    	
-    	sidebar.addComponent(menu);
-    	sidebar.setExpandRatio(menu, 1);
-
-    	sidebar.addComponent(user);
-    	
-    }
-
-    private void CreateBranding(){
+    private void BuildBranding(){
     	branding.setSizeUndefined();
     	branding.addStyleName("branding");
     	branding.addStyleName("menu");
@@ -170,52 +167,30 @@ public class PageControl extends VerticalLayout {
 
     	Label logo = new Label("Zombre <span>Underwear</span>", ContentMode.HTML);
     	logo.setSizeFull();
-    	branding.addComponent(logo);
     	branding.addComponent(b);
+    	branding.addComponent(logo);
     }
     
-    private void CreateUser(){
-    	user.setSizeUndefined();
-    	user.addStyleName("user");
-
-    	Image profilePic = new Image(null, new ThemeResource("img/profile-pic.png"));
-    	profilePic.setWidth("34px");
-    	user.addComponent(profilePic);
-
-    	Label userName = new Label("J. Rodrigues");
-    	userName.setSizeUndefined();
-    	user.addComponent(userName);
-    	user.addComponent(settings);
-
-    	Button exit = new NativeButton("Sair");
-    	exit.addStyleName("icon-cancel");
-    	exit.setDescription("Logoff");
-    	user.addComponent(exit);
-    	exit.addClickListener(new ClickListener() {
-    		public void buttonClick(ClickEvent event) {
-//    			buildLoginView(true);
-    		}
-    	});
-    	
-    }
-    
-    private void CreateSettings(){
+    private void BuildSettings(String user){
     	Command cmd = new Command() {
     		@Override
     		public void menuSelected(MenuItem selectedItem) {
     			Notification.show("Não implementado nesta versão.");
     		}
     	};
-    	
-    	MenuItem settingsMenu = settings.addItem("", null);
-    	settingsMenu.setStyleName("icon-cog");
+
+    	MenuBar menubar = new MenuBar();
+    	MenuItem settingsMenu = menubar.addItem(user, new ThemeResource("img/profile-pic.png"), null);
     	settingsMenu.addItem("Configurações", cmd);
     	settingsMenu.addItem("Preferências", cmd);
     	settingsMenu.addSeparator();
     	settingsMenu.addItem("Minha conta", cmd);    	
     	settingsMenu.addItem("Sair", cmd);    	
+    	
+    	settings.addComponent(menubar);
+    	settings.setMargin(true);
     }
-    
+
     public void clearDashboardButtonBadge() {
         viewNameToMenuButton.get("/dashboard").setCaption("Dashboard");
     }
