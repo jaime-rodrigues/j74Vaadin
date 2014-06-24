@@ -34,8 +34,17 @@ public class Utils {
             }
         });
         panel.addComponent(configure);
-
         panel.addComponent(content);
+        return panel;
+    }
+
+    public static CssLayout CreateSimplePanel(Component content) {
+        CssLayout panel = new CssLayout();
+        panel.addStyleName("layout-panel");
+        panel.setWidth(null);
+        panel.setHeight("100%");
+        panel.addComponent(content);
+        content.setSizeFull();
         return panel;
     }
 

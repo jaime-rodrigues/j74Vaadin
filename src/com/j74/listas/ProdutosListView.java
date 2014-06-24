@@ -31,9 +31,7 @@ public class ProdutosListView extends BaseListView {
         t.setSelectable(true);              
                 
         CssLayout panel = Utils.CreatePanel(t);
-        getRow().addComponent(panel);
-
-        addComponent(t.createControls());
+        addComponent(panel);
 	}
 
 	@Override

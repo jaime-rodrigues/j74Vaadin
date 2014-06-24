@@ -2,12 +2,10 @@ package com.j74.listas;
 
 import com.j74.base.BaseListView;
 import com.j74.dao.Cidade;
-import com.j74.utils.Utils;
-import com.lexaden.grid.PagedTable;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerFactory;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Notification;
 
 @SuppressWarnings("serial")
 public class ClientesListView extends BaseListView {
@@ -18,22 +16,36 @@ public class ClientesListView extends BaseListView {
 		JPAContainer<Cidade> cidades = JPAContainerFactory.make(Cidade.class, "j74Vaadin");
 		cidades.addNestedContainerProperty("uf.ufsigla");
 		        
-		PagedTable t = new PagedTable();
-        t.addStyleName(Reindeer.TABLE_BORDERLESS);
-//        t.addStyleName("borderless");
-        t.setContainerDataSource(cidades);
-        t.setWidth("100%");
-        t.setColumnCollapsingAllowed(true);
-        t.setColumnReorderingAllowed(true);
+        getTable().setContainerDataSource(cidades);
+        getTable().setVisibleColumns(new Object[]{"id","nomecidade","uf.ufsigla"});
+        getTable().setColumnHeaders(new String[]{"#Id", "Cidade", "UF"});
 
-		t.setVisibleColumns(new Object[]{"id","nomecidade","uf.ufsigla"});
-        t.setColumnHeaders(new String[]{"#Id", "Cidade", "UF"});
-        t.setSelectable(true);              
-                
-        CssLayout panel = Utils.CreatePanel(t);
-        getRow().addComponent(panel);
+		getControls().addComponent(new Button("Adicionar") {
+			{
+				addStyleName("icon-transactions");
+				setDescription("Adicionar");
+				addClickListener(new ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent event) {
+						Notification
+								.show("Adicionar - Não implementado nesta versão.");
+					}
+				});
+			}
+		});
 
-        addComponent(t.createControls());
+		getControls().addComponent(new Button("Remover") {
+			{
+				addStyleName("icon-cancel");
+				setDescription("Remover");
+				addClickListener(new ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent event) {
+		    			Notification.show("Remover - Não implementado nesta versão.");
+					}
+				});
+			}
+		});
 	}
 
 	@Override

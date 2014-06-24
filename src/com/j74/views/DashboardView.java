@@ -78,13 +78,9 @@ public class DashboardView extends BaseView {
             }
         });
         
-        getHeader().addComponent(notify);
-        getHeader().setComponentAlignment(notify, Alignment.MIDDLE_LEFT);
-
         Button edit = new Button();
         edit.addStyleName("icon-edit");
         edit.addStyleName("icon-only");
-        getHeader().addComponent(edit);
         edit.setDescription("Edit Dashboard");
         edit.addClickListener(new ClickListener() {
             @Override
@@ -105,7 +101,7 @@ public class DashboardView extends BaseView {
                             {
                                 setSizeUndefined();
                                 setMargin(true);
-                                name.setValue(getTitle().getValue());
+                                name.setValue("Dashboard Name");
                                 addComponent(name);
                                 name.focus();
                                 name.selectAll();
@@ -138,7 +134,6 @@ public class DashboardView extends BaseView {
                                 ok.addClickListener(new ClickListener() {
                                     @Override
                                     public void buttonClick(ClickEvent event) {
-                                        getTitle().setValue(name.getValue());
                                         w.close();
                                     }
                                 });
@@ -152,7 +147,9 @@ public class DashboardView extends BaseView {
 
             }
         });
-        getHeader().setComponentAlignment(edit, Alignment.MIDDLE_LEFT);
+
+        getControls().addComponent(notify);
+        getControls().addComponent(edit);
 
         HorizontalLayout row = new HorizontalLayout();
         row.setSizeFull();
@@ -160,8 +157,6 @@ public class DashboardView extends BaseView {
         row.setSpacing(true);
         addComponent(row);
         setExpandRatio(row, 1.5f);
-
-//        row.addComponent(createPanel(null));
 
         TextArea notes = new TextArea("Notes");
         notes.setValue("Remember to:\n· Zoom in and out in the Sales view\n· Filter the transactions and drag a set of them to the Reports tab\n· Create a new report\n· Change the schedule of the movie theater");
@@ -225,6 +220,5 @@ public class DashboardView extends BaseView {
 	protected String getTitulo() {
 		return "Dashboard";
 	}
-
 
 }

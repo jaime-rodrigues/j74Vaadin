@@ -11,7 +11,6 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -76,7 +75,7 @@ public class PageControl extends VerticalLayout {
 
 		addComponent(menuBar);
 		addComponent(content);
-    	content.setSizeUndefined();
+    	content.setSizeFull();
     	content.addStyleName("view-content");
     	setExpandRatio(content, 1);    	
     }
@@ -168,7 +167,7 @@ public class PageControl extends VerticalLayout {
     	Label logo = new Label("Zombre <span>Underwear</span>", ContentMode.HTML);
     	logo.setSizeFull();
     	branding.addComponent(b);
-    	branding.addComponent(logo);
+//    	branding.addComponent(logo);
     }
     
     private void BuildSettings(String user){
@@ -192,7 +191,7 @@ public class PageControl extends VerticalLayout {
     }
 
     public void clearDashboardButtonBadge() {
-        viewNameToMenuButton.get("/dashboard").setCaption("Dashboard");
+        viewNameToMenuButton.get("/dashboard").setCaption("");
     }
  
 	public void clearMenuSelection(HorizontalLayout menu) {
